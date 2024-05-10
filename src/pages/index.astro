@@ -3,14 +3,179 @@
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Astro</title>
+  </head>
+  <style>
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-gap: 10px;
+      padding: 10px;
+    }
+
+    .grid-item {
+      background-color: #ddd;
+      padding: 20px;
+      text-align: center;
+      font-size: 20px;
+    }
+    .box {
+      width: 50px;
+      height: 50px;
+      display: inline-block;
+      margin: 5px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 50px);
+      grid-template-rows: repeat(5, 50px);
+      gap: 2px;
+    }
+
+    .cell {
+      width: 50px;
+      height: 50px;
+      background-color: lightgray;
+      border: 1px solid black;
+    }
+  </style>
+  <body>
+    <div class="grid" id="grid-container"></div>
+  </body>
+  <script>
+    function obtenerCeldasColoreadas() {
+      const cells = document.querySelectorAll(".cell");
+      const coloredCells = {
+        blue: [],
+        red: [],
+        green: [],
+      };
+
+      // console.log(cell);
+      cells.forEach(function (cell, index) {
+        const color = cell.style.backgroundColor;
+        const position = {
+          row: Math.floor(index / 5) + 1,
+          col: (index % 5) + 1,
+        };
+
+        if (color === "blue") {
+          coloredCells.blue.push(position);
+        } else if (color === "red") {
+          coloredCells.red.push(position);
+        } else if (color === "green") {
+          coloredCells.green.push(position);
+        }
+      });
+
+      return coloredCells;
+    }
+
+    const gridContainer = document.getElementById("grid-container");
+
+    // Crear la cuadrícula
+    for (let i = 0; i < 5; i++) {
+      for (let j = 0; j < 5; j++) {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        gridContainer?.appendChild(cell);
+      }
+    }
+
+    // Colorear celdas aleatorias
+    const cells = document.querySelectorAll(".cell") as NodeListOf<HTMLElement>;
+    const blueCount = 8;
+    const redCount = 9;
+    const greenCount = 1;
+    let colored = 0;
+
+    const celdasColoreadas = obtenerCeldasColoreadas();
+    console.log(celdasColoreadas);
+
+    // function guardarCeldasColoreadasEnLocalStorage() {
+    //   const coloredCells = obtenerCeldasColoreadas();
+    //   localStorage.setItem("coloredCells", JSON.stringify(coloredCells));
+    // }
+
+    // // Llamar a la función para guardar el objeto en localStorage
+    // guardarCeldasColoreadasEnLocalStorage();
+
+    function guardarCeldasColoreadasEnLocalStorage() {
+      const coloredCells = obtenerCeldasColoreadas();
+
+      // Obtener el array existente de celdas coloreadas del localStorage
+      let storedColoredCells =
+        JSON.parse(localStorage.getItem("storedColoredCells")) || [];
+
+      // Agregar el nuevo objeto de celdas coloreadas al array
+      storedColoredCells.push(coloredCells);
+
+      // Guardar el array actualizado en localStorage
+      localStorage.setItem(
+        "storedColoredCells",
+        JSON.stringify(storedColoredCells)
+      );
+    }
+
+    // Llamar a la función para guardar el objeto en localStorage
+    guardarCeldasColoreadasEnLocalStorage();
+
+    function colorearCeldasConPatron(patron) {
+      const cells = document.querySelectorAll(
+        ".cell"
+      ) as NodeListOf<HTMLElement>;
+
+      // Reiniciar estilos
+      cells.forEach((cell) => {
+        cell.style.backgroundColor = "lightgray";
+        cell.dataset.colored = "false";
+      });
+
+      // Colorear celdas según el patrón proporcionado
+      Object.keys(patron).forEach((color) => {
+        patron[color].forEach((position) => {
+          const index = (position.row - 1) * 5 + (position.col - 1);
+          const cell = cells[index];
+
+          cell.style.backgroundColor = color;
+          cell.dataset.colored = "true";
+        });
+      });
+    }
+
+    // obtener el primer objeto de celdas coloreadas del localStorage
+    const celdasColoreadas2 = JSON.parse(
+      localStorage.getItem("storedColoredCells")
+    )[0];
+
+		console.log(celdasColoreadas2);
+
+    if (celdasColoreadas2.blue.length === 0) {
+      while (colored < blueCount + redCount + greenCount) {
+        const randomIndex = Math.floor(Math.random() * cells.length);
+        const cell = cells[randomIndex];
+
+        if (!cell.dataset.colored) {
+          if (colored < blueCount) {
+            cell.style.backgroundColor = "blue";
+          } else if (colored < blueCount + redCount) {
+            cell.style.backgroundColor = "red";
+          } else if (colored < blueCount + redCount + greenCount) {
+            cell.style.backgroundColor = "green";
+          }
+          cell.dataset.colored = "true";
+          colored++;
+        }
+      }
+    }else{
+			colorearCeldasConPatron(celdasColoreadas2)
+	}
+
+    // Llamar a la función para colorear las celdas con el patrón proporcionado
+  </script>
 </html>
