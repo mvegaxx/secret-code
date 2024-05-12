@@ -46,36 +46,10 @@
   </style>
   <body>
     <div class="grid" id="grid-container"></div>
+    <button id="prevButton">Patrón Anterior</button>
+    <button id="nextButton">Siguiente Patrón</button>
   </body>
   <script>
-    function obtenerCeldasColoreadas() {
-      const cells = document.querySelectorAll(".cell");
-      const coloredCells = {
-        blue: [],
-        red: [],
-        green: [],
-      };
-
-      // console.log(cell);
-      cells.forEach(function (cell, index) {
-        const color = cell.style.backgroundColor;
-        const position = {
-          row: Math.floor(index / 5) + 1,
-          col: (index % 5) + 1,
-        };
-
-        if (color === "blue") {
-          coloredCells.blue.push(position);
-        } else if (color === "red") {
-          coloredCells.red.push(position);
-        } else if (color === "green") {
-          coloredCells.green.push(position);
-        }
-      });
-
-      return coloredCells;
-    }
-
     const gridContainer = document.getElementById("grid-container");
 
     // Crear la cuadrícula
@@ -94,17 +68,6 @@
     const greenCount = 1;
     let colored = 0;
 
-    const celdasColoreadas = obtenerCeldasColoreadas();
-    console.log(celdasColoreadas);
-
-    // function guardarCeldasColoreadasEnLocalStorage() {
-    //   const coloredCells = obtenerCeldasColoreadas();
-    //   localStorage.setItem("coloredCells", JSON.stringify(coloredCells));
-    // }
-
-    // // Llamar a la función para guardar el objeto en localStorage
-    // guardarCeldasColoreadasEnLocalStorage();
-
     function guardarCeldasColoreadasEnLocalStorage() {
       const coloredCells = obtenerCeldasColoreadas();
 
@@ -121,9 +84,6 @@
         JSON.stringify(storedColoredCells)
       );
     }
-
-    // Llamar a la función para guardar el objeto en localStorage
-    guardarCeldasColoreadasEnLocalStorage();
 
     function colorearCeldasConPatron(patron) {
       const cells = document.querySelectorAll(
@@ -148,34 +108,113 @@
       });
     }
 
-    // obtener el primer objeto de celdas coloreadas del localStorage
-    const celdasColoreadas2 = JSON.parse(
-      localStorage.getItem("storedColoredCells")
-    )[0];
-
-		console.log(celdasColoreadas2);
-
-    if (celdasColoreadas2.blue.length === 0) {
+    function colorearConPatronAleatorio() {
+      const coloredCells = {
+        blue: [],
+        red: [],
+        green: [],
+      };
       while (colored < blueCount + redCount + greenCount) {
         const randomIndex = Math.floor(Math.random() * cells.length);
         const cell = cells[randomIndex];
-
-        if (!cell.dataset.colored) {
-          if (colored < blueCount) {
-            cell.style.backgroundColor = "blue";
-          } else if (colored < blueCount + redCount) {
-            cell.style.backgroundColor = "red";
-          } else if (colored < blueCount + redCount + greenCount) {
-            cell.style.backgroundColor = "green";
-          }
-          cell.dataset.colored = "true";
-          colored++;
+        console.log(coloredCells);
+        if (colored < blueCount) {
+          coloredCells.green.push(randomIndex);
+        } else if (colored < blueCount + redCount) {
+          coloredCells.green.push(randomIndex);
+        } else if (colored < blueCount + redCount + greenCount) {
+          coloredCells.green.push(randomIndex);
         }
+        colored++;
       }
-    }else{
-			colorearCeldasConPatron(celdasColoreadas2)
-	}
 
-    // Llamar a la función para colorear las celdas con el patrón proporcionado
+      return coloredCells;
+    }
+
+    function obtenerCeldasColoreadas() {
+      const cells = document.querySelectorAll(".cell");
+      const coloredCells = {
+        blue: [],
+        red: [],
+        green: [],
+      };
+
+      // console.log(cell);
+      cells.forEach(function (cell, index) {
+        const color = cell.style.backgroundColor;
+        const position = {
+          row: Math.floor(index / 5) + 1,
+          col: (index % 5) + 1,
+        };
+
+        if (color === "blue") {
+          coloredCells.blue.push(position);
+        } else if (color === "red") {
+          coloredCells.red.push(position);
+        } else if (color === "green") {
+        }
+      });
+
+      return coloredCells;
+    }
+
+    function colorearYguardar() {
+      colorearConPatronAleatorio();
+      guardarCeldasColoreadasEnLocalStorage();
+    }
+
+    const prevButton = document.getElementById("prevButton");
+    const nextButton = document.getElementById("nextButton");
+
+    nextButton.addEventListener("click", function () {
+      const celdasColoreadas = JSON.parse(
+        localStorage.getItem("storedColoredCells")
+      );
+
+      colorearConPatronAleatorio();
+
+      console.log(colorearConPatronAleatorio());
+
+      // if (!celdasColoreadas) {
+      //   guardarCeldasColoreadasEnLocalStorage();
+      // } else {
+      //   colorearConPatronAleatorio();
+      //   guardarCeldasColoreadasEnLocalStorage();
+      // }
+    });
+
+    function aleatoryNumbersGroup({ groups, length, groupSizes }) {
+      const numbers = [];
+      const result = [];
+
+      // Generar una secuencia de números únicos
+      for (let i = 1; i <= length; i++) {
+        numbers.push(i);
+      }
+
+      // Función para obtener un número aleatorio y eliminarlo del arreglo
+      function getRandomUniqueNumber() {
+        const index = Math.floor(Math.random() * numbers.length);
+        return numbers.splice(index, 1)[0];
+      }
+
+      // Generar los grupos
+      groupSizes.forEach((groupSize) => {
+        const group = [];
+        for (let j = 0; j < groupSize; j++) {
+          group.push(getRandomUniqueNumber());
+        }
+        result.push(group);
+      });
+
+      return result;
+    }
+
+    // Ejemplo de uso
+    const groups = 3;
+    const length = 25;
+    const groupSizes = [8, 9, 1]; // Cantidad de elementos en cada grupo
+    const randomGroups = aleatoryNumbersGroup({ groups, length, groupSizes });
+    console.log(randomGroups);
   </script>
 </html>
