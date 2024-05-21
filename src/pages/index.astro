@@ -1,5 +1,15 @@
 ---
+const queonda: string = "queondas";
 
+export const render = async () => {
+  const gridContainer = document.getElementById("grid-container");
+  const prevButton = document.getElementById("prevButton");
+  const nextButton = document.getElementById("nextButton");
+  console.log("HOLS");
+};
+
+
+await render();
 ---
 
 <html lang="en">
@@ -15,6 +25,7 @@
     <div class="grid" id="grid-container"></div>
     <button id="prevButton">Patrón Anterior</button>
     <button id="nextButton">Siguiente Patrón</button>
+    { queonda }
   </body>
 
 </html>
